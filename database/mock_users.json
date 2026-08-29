@@ -1,11 +1,15 @@
-[{
+[
+    {
         "user_id": "K-001",
         "name": "Ramesh Kumar",
         "phone": "9876543210",
         "pin": "1234",
         "village": "Gudha Gorji",
         "district": "Jhunjhunu",
-        "crops": ["Pyaz", "Gehu"]
+        "crops": [
+            "Pyaz",
+            "Gehu"
+        ]
     },
     {
         "user_id": "K-002",
@@ -14,7 +18,10 @@
         "pin": "0000",
         "village": "Khetri",
         "district": "Jhunjhunu",
-        "crops": ["Tamatar", "Bajra"]
+        "crops": [
+            "Tamatar",
+            "Bajra"
+        ]
     },
     {
         "user_id": "K-001",
@@ -23,6 +30,20 @@
         "pin": "1234",
         "village": "Gudha Gorji",
         "district": "Jhunjhunu",
-        "crops": ["Pyaz", "Gehu"]
+        "crops": [
+            "Pyaz",
+            "Gehu"
+        ]
+    },
+    {
+        "user_id": "K-927",
+        "name": "Aaditya Pareek",
+        "phone": "7568381131",
+        "pin": "2006",
+        "village": "Ratangarh",
+        "district": "Churu",
+        "crops": [
+            "Pyaz"
+        ]
     }
 ]

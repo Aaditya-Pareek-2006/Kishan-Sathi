@@ -1,4 +1,5 @@
 # backend/auth_routes.py
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import json
@@ -6,12 +7,23 @@ import os
 import random
 
 router = APIRouter()
-db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'mock_users.json')
 
-# Schemas
+# Path to mock database
+db_path = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "database",
+    "mock_users.json"
+)
+
+
+# ============================================================
+# SCHEMAS
+# ============================================================
+
 class LoginRequest(BaseModel):
     phone: str
     pin: str
+
 
 class SignupRequest(BaseModel):
     name: str
@@ -20,38 +32,46 @@ class SignupRequest(BaseModel):
     village: str
     district: str
 
+
+# ============================================================
 # 1. LOGIN ROUTE
+# ============================================================
+
 @router.post("/login")
 def login_user(request: LoginRequest):
+
     try:
-        if os.path.exists(db_path):
-            with open(db_path, 'r') as file:
-                users = json.load(file)
-            for user in users:
-                if user['phone'] == request.phone and user['pin'] == request.pin:
-                    user_data = user.copy()
-                    del user_data['pin'] 
-                    return {"status": "success", "message": "Login successful", "user": user_data}
-        raise HTTPException(status_code=401, detail="Galat Phone Number ya PIN")
-    @router.post("/login")
+        # Check whether database file exists
+        if not os.path.exists(db_path):
+            print("DATABASE FILE NOT FOUND:", db_path)
 
-def login_user(request: LoginRequest):
-    try:
-        if os.path.exists(db_path):
-            with open(db_path, 'r') as file:
-                users = json.load(file)
+            raise HTTPException(
+                status_code=500,
+                detail="Database file not found!"
+            )
 
-            for user in users:
-                if user['phone'] == request.phone and user['pin'] == request.pin:
-                    user_data = user.copy()
-                    del user_data['pin']
+        # Read users database
+        with open(db_path, "r", encoding="utf-8") as file:
+            users = json.load(file)
 
-                    return {
-                        "status": "success",
-                        "message": "Login successful",
-                        "user": user_data
-                    }
+        # Check credentials
+        for user in users:
 
+            if (
+                str(user.get("phone")) == str(request.phone)
+                and str(user.get("pin")) == str(request.pin)
+            ):
+                # Don't send PIN back to frontend
+                user_data = user.copy()
+                user_data.pop("pin", None)
+
+                return {
+                    "status": "success",
+                    "message": "Login successful",
+                    "user": user_data
+                }
+
+        # Credentials don't match
         raise HTTPException(
             status_code=401,
             detail="Galat Phone Number ya PIN"
@@ -60,46 +80,95 @@ def login_user(request: LoginRequest):
     except HTTPException:
         raise
 
+    except json.JSONDecodeError:
+        print("LOGIN DATABASE ERROR: Invalid JSON")
+
+        raise HTTPException(
+            status_code=500,
+            detail="Database Error: Invalid database file!"
+        )
+
     except Exception as e:
         print("LOGIN DATABASE ERROR:", e)
+
         raise HTTPException(
             status_code=500,
             detail="Database Error!"
         )
 
-# 2. SIGNUP ROUTE (Naya Kisaan Jodna)
+
+# ============================================================
+# 2. SIGNUP ROUTE
+# ============================================================
+
 @router.post("/signup")
 def signup_user(request: SignupRequest):
-    users = []
-    if os.path.exists(db_path):
-        with open(db_path, 'r') as file:
-            try:
-                users = json.load(file)
-            except json.JSONDecodeError:
-                users = []
-                
-    # Check karna ki number pehle se toh nahi hai
-    for user in users:
-        if user['phone'] == request.phone:
-            raise HTTPException(status_code=400, detail="Yeh number pehle se register hai!")
 
-    # Naya kisaan ID generate karna
-    new_user = {
-        "user_id": f"K-{random.randint(100, 999)}",
-        "name": request.name,
-        "phone": request.phone,
-        "pin": request.pin,
-        "village": request.village,
-        "district": request.district,
-        "crops": ["Pyaz"] # Default crop
-    }
-    
-    # Naya user database me add aur save karna
-    users.append(new_user)
-    with open(db_path, 'w') as file:
-        json.dump(users, file, indent=4)
-        
-    # Auto-login ke liye bina PIN ka data wapas bhejna
-    user_data = new_user.copy()
-    del user_data['pin']
-    return {"status": "success", "message": "Account ban gaya!", "user": user_data}
+    try:
+        users = []
+
+        # Load existing users
+        if os.path.exists(db_path):
+
+            with open(db_path, "r", encoding="utf-8") as file:
+
+                try:
+                    users = json.load(file)
+
+                except json.JSONDecodeError:
+                    users = []
+
+        # Check if phone already exists
+        for user in users:
+
+            if str(user.get("phone")) == str(request.phone):
+
+                raise HTTPException(
+                    status_code=400,
+                    detail="Yeh number pehle se register hai!"
+                )
+
+        # Generate farmer ID
+        new_user = {
+            "user_id": f"K-{random.randint(100, 999)}",
+            "name": request.name,
+            "phone": request.phone,
+            "pin": request.pin,
+            "village": request.village,
+            "district": request.district,
+            "crops": ["Pyaz"]
+        }
+
+        # Add user
+        users.append(new_user)
+
+        # Save database
+        with open(db_path, "w", encoding="utf-8") as file:
+
+            json.dump(
+                users,
+                file,
+                indent=4,
+                ensure_ascii=False
+            )
+
+        # Don't return PIN
+        user_data = new_user.copy()
+        user_data.pop("pin", None)
+
+        return {
+            "status": "success",
+            "message": "Account ban gaya!",
+            "user": user_data
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print("SIGNUP DATABASE ERROR:", e)
+
+        raise HTTPException(
+            status_code=500,
+            detail="Database Error!"
+        )
