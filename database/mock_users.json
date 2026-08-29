@@ -1,0 +1,28 @@
+[{
+        "user_id": "K-001",
+        "name": "Ramesh Kumar",
+        "phone": "9876543210",
+        "pin": "1234",
+        "village": "Gudha Gorji",
+        "district": "Jhunjhunu",
+        "crops": ["Pyaz", "Gehu"]
+    },
+    {
+        "user_id": "K-002",
+        "name": "Suresh Gurjar",
+        "phone": "9988776655",
+        "pin": "0000",
+        "village": "Khetri",
+        "district": "Jhunjhunu",
+        "crops": ["Tamatar", "Bajra"]
+    },
+    {
+        "user_id": "K-001",
+        "name": "Ramesh Kumar",
+        "phone": "9876543210",
+        "pin": "1234",
+        "village": "Gudha Gorji",
+        "district": "Jhunjhunu",
+        "crops": ["Pyaz", "Gehu"]
+    }
+]

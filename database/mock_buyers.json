@@ -1,0 +1,11 @@
+[{
+    "buyer_id": "BUYER_002",
+    "name": "AgriFresh Dehydration Plant",
+    "type": "Processing Factory",
+    "is_verified": true,
+    "trust_score": 4.5,
+    "location": { "lat": 28.12, "lon": 75.60 },
+    "buying_rates": [
+        { "crop": "Pyaz", "price_per_qtl": 1400, "quality_req": "Any Size" }
+    ]
+}]

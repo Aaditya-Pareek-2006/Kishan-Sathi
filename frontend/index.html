@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Kisan Intel - AI Price Predictor for Farmers.">
+    <meta name="theme-color" content="#15803d">
+    <title>Kisan Intel - AI Price Predictor</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        kisan: {
+                            light: '#dcfce7',
+                            DEFAULT: '#16a34a',
+                            dark: '#15803d',
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.3s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(10px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="text-gray-800 antialiased pb-24 relative">
+
+    <div id="toast-container" class="fixed top-14 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+    <div id="api-error-banner" class="hidden bg-orange-500 text-white text-center py-2 text-sm font-medium shadow-md transition-all" role="alert">
+        <i class="fa-solid fa-triangle-exclamation mr-2"></i> Data load karne mein samasya.
+        <button onclick="retryFetch()" class="underline font-bold ml-1 hover:text-orange-200 focus:outline-none">Retry</button>
+    </div>
+
+    <header class="bg-green-700 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-40 transition-all">
+        <div class="flex items-center gap-3">
+            <div class="bg-white text-green-700 p-2 rounded-full h-10 w-10 flex items-center justify-center shadow-inner">
+                <i class="fa-solid fa-seedling text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold leading-tight">Kisan Intel</h1>
+                <p class="text-xs text-green-200 font-medium">AI Price Predictor</p>
+            </div>
+        </div>
+        <button id="lang-toggle" class="bg-green-600 px-3 py-1.5 rounded-md text-sm font-semibold border border-green-500 hover:bg-green-500 transition-colors shadow-sm flex items-center gap-1 focus:ring-2 focus:ring-white outline-none">
+            <i class="fa-solid fa-language"></i> <span id="current-lang">HI</span> <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
+        </button>
+    </header>
+
+    <main class="max-w-md mx-auto mt-4 px-4 space-y-5">
+
+        <section class="bg-blue-50 rounded-xl p-4 border border-blue-100 flex items-center justify-between shadow-sm cursor-pointer">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-cloud-sun-rain text-3xl text-blue-500 animate-pulse-slow"></i>
+                <div>
+                    <h3 class="font-bold text-gray-700 text-sm">Jhunjhunu, Rajasthan</h3>
+                    <p class="text-xs text-gray-500">Bhari barish (Heavy rain) in 2 days</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-2xl font-bold text-gray-800">32°C</p>
+                <p class="text-[10px] text-blue-500 font-medium">Details <i class="fa-solid fa-arrow-right"></i></p>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-center mb-2 px-1">
+                <h3 class="text-sm font-bold text-gray-800">Chunein (Select Crop)</h3>
+                <button class="text-xs text-green-600 hover:underline"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+            <div class="flex overflow-x-auto gap-3 no-scrollbar pb-2">
+                <button class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md whitespace-nowrap border-2 border-green-600">
+                    <i class="fa-solid fa-onion mr-1"></i> Pyaz (Onion)
+                </button>
+                <button class="bg-white text-gray-600 px-4 py-2 rounded-full text-sm font-medium shadow-sm border border-gray-200 whitespace-nowrap">
+                    <i class="fa-solid fa-wheat-awn mr-1"></i> Gehu (Wheat)
+                </button>
+            </div>
+        </section>
+
+        <section id="main-content" class="bg-white rounded-xl shadow-lg p-5 border-t-4 border-green-500 relative overflow-hidden animate-fade-in-up">
+            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-green-50 rounded-full opacity-50 z-0 pointer-events-none"></div>
+
+            <div class="flex justify-between items-center mb-4 relative z-10">
+                <h2 class="text-lg font-bold text-gray-800">Mandi Bhav <span class="text-green-600">(Pyaz)</span></h2>
+                <button id="mic-btn" class="text-green-600 bg-green-50 p-2.5 rounded-full shadow-sm border border-green-100 outline-none">
+                    <i class="fa-solid fa-microphone text-xl"></i>
+                </button>
+            </div>
+
+            <div id="ai-meter-container" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-5 text-center border border-gray-200 shadow-inner relative z-10">
+                <p class="text-center text-gray-500 animate-pulse">AI Data load kar raha hai...</p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <h3 class="text-sm font-bold text-gray-800 mb-1 flex items-center justify-between">
+                <span><i class="fa-solid fa-chart-bar text-green-500 mr-1"></i> Pichle 7 Din Ka Bhav</span>
+                <span class="text-[10px] font-normal text-gray-500">₹/qtl</span>
+            </h3>
+            <div class="h-28 flex items-end gap-2 justify-between mt-4 px-1">
+                <div class="w-full bg-green-100 rounded-t-sm h-[40%] relative group">
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-gray-400">Mon</div>
+                </div>
+                <div class="w-full bg-green-100 rounded-t-sm h-[50%] relative group">
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-gray-400">Tue</div>
+                </div>
+                <div class="w-full bg-green-100 rounded-t-sm h-[45%] relative group">
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-gray-400">Wed</div>
+                </div>
+                <div class="w-full bg-green-100 rounded-t-sm h-[60%] relative group">
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-gray-400">Thu</div>
+                </div>
+                <div class="w-full bg-green-100 rounded-t-sm h-[80%] relative group">
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-gray-400">Fri</div>
+                </div>
+                <div class="w-full bg-green-100 rounded-t-sm h-[70%] relative group">
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-gray-400">Sat</div>
+                </div>
+                <div class="w-full bg-green-500 rounded-t-sm h-[100%] relative shadow-sm">
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-bold text-gray-800">Sun</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-end mb-3 px-1">
+                <h3 class="text-md font-bold text-gray-800">Best Rates Aas-Paas</h3>
+            </div>
+            <div id="market-list" class="space-y-3">
+                <p class="text-center text-gray-500 animate-pulse text-sm">Market rates dhoondh raha hai...</p>
+            </div>
+        </section>
+
+        <section class="ai-gradient text-white rounded-xl p-5 shadow-lg flex items-center justify-between cursor-pointer">
+            <div class="flex-1 pr-2">
+                <h4 class="font-bold text-lg leading-tight flex items-center"><i class="fa-brands fa-whatsapp text-2xl mr-2 text-green-300"></i> Daily Bhav WhatsApp Par</h4>
+                <p class="text-xs text-green-50 mt-1.5 leading-snug">Bina app khole roz subah apne phone par rate aur salah payein.</p>
+            </div>
+            <button id="whatsapp-btn" class="bg-white text-green-700 font-bold py-2 px-5 rounded-full text-sm shadow-md">Activate</button>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white border-t border-gray-200 flex justify-around p-3 text-gray-500 text-sm shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 rounded-t-xl">
+        <a href="index.html" class="flex flex-col items-center text-green-600 font-bold">
+            <i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px] uppercase tracking-wide">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center hover:text-green-600 transition-colors">
+            <i class="fa-solid fa-chart-line text-xl mb-1"></i><span class="text-[10px] uppercase tracking-wide">Trends</span>
+        </a>
+        <a href="profile.html" class="flex flex-col items-center hover:text-green-600 transition-colors">
+            <i class="fa-solid fa-user text-xl mb-1"></i><span class="text-[10px] uppercase tracking-wide">Profile</span>
+        </a>
+    </nav>
+
+    <script src="auth.js"></script>
+    <script src="component.js"></script>
+    <script src="speedometerGauge.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

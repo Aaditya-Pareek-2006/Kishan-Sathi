@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Kisan Intel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-gray-50 pb-24 font-sans">
+
+    <header class="bg-green-700 text-white p-4 shadow-md sticky top-0 z-40">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-white hover:text-green-200"><i class="fa-solid fa-arrow-left text-xl"></i></a>
+            <h1 class="text-xl font-bold">Meri Profile</h1>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto mt-6 px-4 space-y-4 animate-fade-in-up">
+
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-16 bg-green-100"></div>
+            <div class="relative z-10">
+                <div class="w-20 h-20 bg-green-600 text-white rounded-full mx-auto flex items-center justify-center text-3xl shadow-md border-4 border-white mb-3">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h2 id="profile-name" class="text-xl font-bold text-gray-800">Load ho raha hai...</h2>
+                <p id="profile-phone" class="text-sm text-gray-500 font-medium mt-1">...</p>
+                <p class="text-xs text-green-600 font-bold mt-2 bg-green-50 inline-block px-3 py-1 rounded-full border border-green-200">Verified Farmer <i class="fa-solid fa-circle-check"></i></p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4 border-b border-gray-100 flex items-center gap-3">
+                <i class="fa-solid fa-location-dot text-gray-400 w-5 text-center"></i>
+                <div>
+                    <p class="text-xs text-gray-400">Gaon / Zila (Location)</p>
+                    <p id="profile-location" class="font-bold text-gray-700">...</p>
+                </div>
+            </div>
+            <div class="p-4 border-b border-gray-100 flex items-center gap-3">
+                <i class="fa-solid fa-seedling text-gray-400 w-5 text-center"></i>
+                <div>
+                    <p class="text-xs text-gray-400">Meri Fasle (Crops)</p>
+                    <p class="font-bold text-gray-700">Pyaz, Gehu</p>
+                </div>
+            </div>
+        </section>
+
+        <button id="logoutBtn" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-200 hover:bg-red-100 transition shadow-sm mt-8 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout Karein
+        </button>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white border-t border-gray-200 flex justify-around p-3 text-gray-500 text-sm shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 rounded-t-xl">
+        <a href="index.html" class="flex flex-col items-center hover:text-green-600 transition-colors">
+            <i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px] uppercase tracking-wide">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center hover:text-green-600 transition-colors">
+            <i class="fa-solid fa-chart-line text-xl mb-1"></i><span class="text-[10px] uppercase tracking-wide">Trends</span>
+        </a>
+        <a href="profile.html" class="flex flex-col items-center text-green-600 font-bold">
+            <i class="fa-solid fa-user text-xl mb-1"></i><span class="text-[10px] uppercase tracking-wide">Profile</span>
+        </a>
+    </nav>
+
+    <script src="auth.js"></script>
+</body>
+
+</html>

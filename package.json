@@ -1,0 +1,21 @@
+{
+  "name": "kishan-intel",
+  "version": "1.0.0",
+  "description": "![Hackathon Domain](https://img.shields.io/badge/Domain-AgriTech-success)\r ![AI/ML](https://img.shields.io/badge/AI%2FML-Predictive%20Analytics-blue)\r ![Backend](https://img.shields.io/badge/Backend-FastAPI-009688)",
+  "main": "index.js",
+ "scripts": {
+  "dev": "vite frontend",
+  "build": "vite build frontend",
+  "preview": "vite preview"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "three": "^0.185.1"
+  }
+}
